@@ -2,25 +2,663 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Product Thinking</title>
-<link rel="stylesheet" href="assets/style.css">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Problem Match</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,400;0,500;0,700;0,800;0,900;1,800;1,900&display=swap">
+<style>
+:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;padding:0}
+img{max-width:100%}
+[hidden]:not([hidden=until-found i]){display:none!important}
+</style>
+<style>
+:root{
+  --bg:#FBF5F7; --surface:#FFFFFF; --ink:#24141C; --muted:#7A6570; --rule:#EFDFE5;
+  --brand1:#F7418F; --brand2:#FF7A59; --on-brand:#FFFFFF;
+  --nope:#EB3B5A; --like:#12B386;
+  --shadow:0 2px 6px rgba(60,20,40,.08), 0 16px 36px rgba(60,20,40,.14);
+  --btn-bg:#FFFFFF;
+  --font:"Figtree", "Segoe UI", system-ui, -apple-system, sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#140D12; --surface:#201720; --ink:#F5EAF0; --muted:#B49DA9; --rule:#382833;
+    --nope:#FF6680; --like:#3DDBA8;
+    --shadow:0 2px 6px rgba(0,0,0,.35), 0 16px 36px rgba(0,0,0,.45);
+    --btn-bg:#261C25;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#140D12; --surface:#201720; --ink:#F5EAF0; --muted:#B49DA9; --rule:#382833;
+  --nope:#FF6680; --like:#3DDBA8;
+  --shadow:0 2px 6px rgba(0,0,0,.35), 0 16px 36px rgba(0,0,0,.45);
+  --btn-bg:#261C25;
+}
+
+*{box-sizing:border-box}
+html,body{min-height:100%}
+body{background:var(--bg); color:var(--ink); font-family:var(--font); font-size:16px; line-height:1.5; padding-inline:16px}
+.app{max-width:440px; margin:0 auto; padding-block:14px 40px; display:grid; gap:14px}
+h1,h2,h3{line-height:1.08; margin:0; text-wrap:balance; letter-spacing:-.02em}
+h1{font-size:clamp(2.1rem,8.5vw,2.8rem); font-weight:900}
+h2{font-size:clamp(1.6rem,6.5vw,2rem); font-weight:800}
+h3{font-size:1.02rem; font-weight:700; letter-spacing:0}
+p{margin:0}
+a{color:var(--brand1)}
+button{font:inherit; cursor:pointer; color:inherit}
+:focus-visible{outline:3px solid var(--brand1); outline-offset:3px}
+.muted{color:var(--muted)}
+.grad-text{background:linear-gradient(100deg,var(--brand1),var(--brand2)); -webkit-background-clip:text; background-clip:text; color:transparent}
+.eyebrow{font-size:.75rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--muted)}
+
+.btn{border:0; background:linear-gradient(100deg,var(--brand1),var(--brand2)); color:var(--on-brand); padding:14px 26px; border-radius:999px; font-weight:800; font-size:1rem; letter-spacing:.01em; box-shadow:0 6px 18px color-mix(in srgb, var(--brand1) 35%, transparent)}
+.btn.ghost{background:transparent; color:var(--brand1); box-shadow:none; border:2px solid var(--brand1); padding:12px 22px}
+.row{display:flex; gap:12px; flex-wrap:wrap; align-items:center}
+
+/* ---------- top bar ---------- */
+.topbar{display:flex; align-items:center; justify-content:space-between; gap:10px}
+.logo{display:flex; align-items:center; gap:8px; font-weight:900; font-size:1.25rem; letter-spacing:-.03em}
+.logo svg{width:26px; height:26px; flex:none}
+.hud-stats{display:flex; gap:12px; font-size:.85rem; font-variant-numeric:tabular-nums; color:var(--muted); font-weight:500}
+.hud-stats b{color:var(--ink); font-weight:800}
+.streak.hot b{color:var(--brand1)}
+.hud{display:grid; gap:8px}
+.hud-round{font-size:.82rem; font-weight:700; color:var(--muted)}
+.timer{height:5px; background:var(--rule); border-radius:999px; overflow:hidden}
+.timer i{display:block; height:100%; width:100%; background:linear-gradient(90deg,var(--brand1),var(--brand2)); transform-origin:left}
+.timer.low i{background:var(--nope)}
+
+/* ---------- screens ---------- */
+.screen{display:grid; gap:16px}
+.panel{background:var(--surface); border:1px solid var(--rule); border-radius:18px; padding:18px; display:grid; gap:12px}
+
+.splash{display:grid; gap:12px; padding-block:22px 4px}
+.splash .lede{font-size:1.08rem; color:var(--muted)}
+.howto{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+.howto div{border-radius:14px; padding:12px 14px; display:grid; gap:2px; border:2px solid currentColor}
+.howto .n{color:var(--nope)} .howto .l{color:var(--like)}
+.howto b{font-weight:900; font-size:1.05rem; letter-spacing:.02em}
+.howto span{color:var(--ink); font-size:.85rem}
+.pairs{list-style:none; margin:0; padding:0; display:grid}
+.pairs li{display:grid; grid-template-columns:1fr auto 1fr; gap:8px; align-items:center; padding:9px 0; border-top:1px solid var(--rule); font-size:.92rem}
+.pairs li:first-child{border-top:0; padding-top:0}
+.pairs .nv{color:var(--nope); font-weight:700}
+.pairs .lv{color:var(--like); font-weight:700; text-align:right}
+.pairs .t{font-size:.72rem; color:var(--muted); text-align:center; white-space:nowrap}
+.rules{list-style:none; margin:0; padding:0; display:grid; gap:6px; font-size:.9rem; color:var(--muted)}
+
+.intro{display:grid; gap:12px; padding-block:10px 0}
+.sides{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+.side{border-radius:16px; padding:14px; display:grid; gap:4px; border:2px solid currentColor}
+.side.n{color:var(--nope)} .side.l{color:var(--like)}
+.side .k{font-size:.72rem; font-weight:800; letter-spacing:.1em}
+.side b{font-size:1.2rem; font-weight:900}
+.side span{color:var(--ink); font-size:.86rem}
+.context{font-size:.92rem; padding:10px 14px; border-radius:14px; background:var(--surface); border:1px dashed var(--rule)}
+
+/* ---------- deck + profile cards ---------- */
+.deck{position:relative; height:clamp(380px, 62vh, 480px); touch-action:pan-y}
+.card{position:absolute; inset:0; border-radius:20px; overflow:hidden; box-shadow:var(--shadow); user-select:none; -webkit-user-select:none; background:#2a1a24; color:#fff}
+.card.next{transform:scale(.95) translateY(12px); filter:brightness(.85)}
+.card.top{cursor:grab; will-change:transform}
+.card.top.dragging{cursor:grabbing}
+.photo{position:absolute; inset:0}
+.photo .emoji{position:absolute; left:50%; top:34%; transform:translate(-50%,-50%); font-size:clamp(88px, 26vw, 120px); line-height:1; filter:drop-shadow(0 10px 18px rgba(0,0,0,.25))}
+.photo::after{content:""; position:absolute; inset:0; background:radial-gradient(120% 70% at 50% 25%, rgba(255,255,255,.18), transparent 60%)}
+.bars{position:absolute; top:10px; left:12px; right:12px; display:flex; gap:4px; z-index:2}
+.bars i{flex:1; height:3px; border-radius:2px; background:rgba(255,255,255,.35)}
+.bars i.on{background:#fff}
+.info{position:absolute; left:0; right:0; bottom:0; padding:60px 18px 18px; background:linear-gradient(to top, rgba(18,8,14,.92) 0%, rgba(18,8,14,.78) 55%, rgba(18,8,14,0) 100%); display:grid; gap:6px; z-index:1}
+.info .name{font-size:clamp(1.5rem,6.2vw,1.85rem); font-weight:900; letter-spacing:-.02em; line-height:1.1; text-wrap:balance}
+.info .job{font-size:.88rem; font-weight:500; opacity:.88; display:flex; gap:6px; align-items:center}
+.info .job svg{width:14px; height:14px; flex:none; opacity:.9}
+.info .bio{font-size:1rem; line-height:1.4}
+.tags{display:flex; flex-wrap:wrap; gap:6px; margin-top:2px}
+.tags span{font-size:.75rem; font-weight:700; padding:3px 9px; border-radius:999px; background:rgba(255,255,255,.16); border:1px solid rgba(255,255,255,.22)}
+.stamp{position:absolute; top:44px; z-index:3; display:grid; justify-items:center; font-weight:900; font-size:2.2rem; letter-spacing:.06em; border:4px solid currentColor; border-radius:10px; padding:0 12px 4px; line-height:1.1; opacity:0; pointer-events:none; background:rgba(0,0,0,.1)}
+.stamp small{font-size:.7rem; letter-spacing:.12em; text-transform:uppercase; font-weight:800}
+.stamp.like{left:20px; color:#3DEBB0; transform:rotate(-14deg)}
+.stamp.nope{right:20px; color:#FF5C7A; transform:rotate(14deg)}
+
+.match{position:absolute; inset:0; z-index:4; display:grid; place-items:center; pointer-events:none; opacity:0; transition:opacity .15s}
+.match.show{opacity:1}
+.match div{text-align:center; transform:scale(.9); transition:transform .3s cubic-bezier(.3,1.6,.5,1)}
+.match.show div{transform:scale(1)}
+.match b{display:block; font-size:clamp(2.4rem,11vw,3.4rem); font-weight:900; font-style:italic; letter-spacing:-.03em; line-height:1; background:linear-gradient(100deg,#FFD1E3,#fff 40%,#FFD9C9); -webkit-background-clip:text; background-clip:text; color:transparent; filter:drop-shadow(0 4px 14px rgba(247,65,143,.6))}
+.match span{display:inline-block; margin-top:8px; font-weight:800; color:#fff; background:linear-gradient(100deg,var(--brand1),var(--brand2)); padding:4px 12px; border-radius:999px; font-size:.9rem; font-variant-numeric:tabular-nums}
+.match-bg{position:absolute; inset:0; border-radius:20px; background:rgba(20,8,14,.55)}
+
+.toast{position:absolute; left:50%; top:14px; transform:translate(-50%,-6px); z-index:5; font-size:.9rem; font-weight:800; padding:8px 14px; border-radius:999px; background:var(--surface); box-shadow:var(--shadow); white-space:nowrap; opacity:0; transition:opacity .15s, transform .25s; font-variant-numeric:tabular-nums}
+.toast.show{opacity:1; transform:translate(-50%,0)}
+.toast.good{color:var(--like)} .toast.bad{color:var(--nope)}
+
+.actions{display:flex; justify-content:center; align-items:center; gap:28px; padding-top:4px}
+.round-btn{width:68px; height:68px; border-radius:50%; border:0; background:var(--btn-bg); box-shadow:var(--shadow); display:grid; place-items:center; transition:transform .12s}
+.round-btn:active{transform:scale(.92)}
+.round-btn svg{width:30px; height:30px}
+.round-btn.n{color:var(--nope)} .round-btn.l{color:var(--like)}
+.act{display:grid; justify-items:center; gap:6px}
+.act small{font-size:.75rem; font-weight:800; letter-spacing:.04em}
+.act.n small{color:var(--nope)} .act.l small{color:var(--like)}
+
+/* ---------- summary / final ---------- */
+.stats{display:grid; grid-template-columns:repeat(3,1fr); gap:10px}
+.stat{background:var(--surface); border:1px solid var(--rule); border-radius:16px; padding:12px; display:grid; gap:0}
+.stat .eyebrow{font-size:.66rem}
+.stat b{font-size:1.5rem; font-weight:900; font-variant-numeric:tabular-nums}
+.lesson{font-size:.98rem; padding:14px 16px; border-radius:16px; background:color-mix(in srgb, var(--brand1) 9%, var(--surface)); border:1px solid color-mix(in srgb, var(--brand1) 25%, var(--rule))}
+.review-group{display:grid; gap:0}
+.review-group h3{padding-bottom:8px}
+.review-group h3 small{display:block; font-weight:500; font-size:.82rem; color:var(--muted)}
+.review{list-style:none; margin:0; padding:0; display:grid}
+.review li{display:grid; grid-template-columns:40px 1fr; gap:4px 12px; padding:10px 0; border-top:1px solid var(--rule)}
+.review .av{grid-row:span 3; width:40px; height:40px; border-radius:50%; display:grid; place-items:center; font-size:20px}
+.review .q{font-weight:800}
+.review .a{font-size:.78rem; font-weight:800}
+.review .a.like{color:var(--like)} .review .a.nope{color:var(--nope)}
+.review .w{font-size:.88rem; color:var(--muted)}
+.verdict{display:grid; gap:8px; padding-block:16px 0}
+.verdict .quip{font-size:1.05rem; color:var(--muted)}
+.learned{list-style:none; margin:0; padding:0; display:grid; gap:12px}
+.learned li{display:grid; gap:2px; font-size:.92rem}
+footer{font-size:.8rem; color:var(--muted); padding-top:12px; border-top:1px solid var(--rule)}
+
+@media (prefers-reduced-motion:reduce){ *{transition:none!important; animation:none!important} }
+</style>
 </head>
 <body>
-<main>
-<p class="kicker">Product Thinking</p>
-<h1>Product Thinking</h1>
-<p class="subtitle">Bite-sized lessons grounded in IDG Singapore's product thinking guides.</p>
 
-<h2>Lessons</h2>
-<ol>
-  <li><a href="lessons/0001-problems-not-solutions.html">Problems, not solutions</a></li>
-</ol>
+<div class="app">
+  <div class="topbar">
+    <span class="logo">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F7418F"/><stop offset="1" stop-color="#FF7A59"/></linearGradient></defs><path fill="url(#lg)" d="M16 29s-11-6.7-11-15a6.5 6.5 0 0 1 11-4.7A6.5 6.5 0 0 1 27 14c0 8.3-11 15-11 15z"/><text x="16" y="20" text-anchor="middle" font-family="Figtree, sans-serif" font-weight="900" font-size="13" fill="#fff">?</text></svg>
+      <span class="grad-text">problem match</span>
+    </span>
+    <span class="hud-stats" id="hudStats" hidden><span>Score <b id="hudScore">0</b></span><span class="streak" id="hudStreak">Streak <b>0</b></span></span>
+  </div>
 
-<h2>Reference</h2>
-<ul>
-  <li><a href="reference/toolkit.html">Product Thinking Toolkit</a></li>
-</ul>
-</main>
+  <div class="hud" id="hud" hidden>
+    <span class="hud-round" id="hudRound"></span>
+    <div class="timer" id="timer"><i id="timerBar"></i></div>
+  </div>
+
+  <!-- TITLE -->
+  <section class="screen" id="s-title">
+    <div class="splash">
+      <span class="eyebrow">A product thinking game · based on IDG's AI Build 301 pathway</span>
+      <h1>Swipe right on <span class="grad-text">problems worth solving.</span></h1>
+      <p class="lede">Shiny solutions, loud symptoms and vanity outputs all want your attention. Only one kind of profile is a keeper. You have four rounds to find them.</p>
+    </div>
+    <div class="howto">
+      <div class="n"><b>← NOPE</b><span>Solutions in disguise, symptoms, outputs</span></div>
+      <div class="l"><b>LIKE →</b><span>Real problems, root causes, outcomes</span></div>
+    </div>
+    <div class="panel">
+      <h3>Tonight's rounds</h3>
+      <ul class="pairs" id="pairs"></ul>
+    </div>
+    <ul class="rules">
+      <li>Swipe the card, tap ✕ or ♥, or use the ← → keys.</li>
+      <li>Fast swipes score more. Every 3 in a row raises your multiplier, up to ×3.</li>
+      <li>A wrong swipe costs 3 seconds. You'll see every red flag you missed after each round.</li>
+    </ul>
+    <div class="row"><button class="btn" id="startBtn" type="button">Start swiping</button><span class="muted" style="font-size:.88rem">About 5 minutes</span></div>
+  </section>
+
+  <!-- ROUND INTRO -->
+  <section class="screen" id="s-intro" hidden>
+    <div class="intro">
+      <span class="eyebrow" id="introKicker"></span>
+      <h2 id="introTitle"></h2>
+      <p id="introBrief"></p>
+      <p class="context" id="introContext" hidden></p>
+    </div>
+    <div class="sides">
+      <div class="side n"><span class="k">← NOPE</span><b id="introN"></b><span id="introNd"></span></div>
+      <div class="side l"><span class="k">LIKE →</span><b id="introL"></b><span id="introLd"></span></div>
+    </div>
+    <div class="row"><button class="btn" id="goBtn" type="button">Show me profiles</button><span class="muted" id="introTime" style="font-size:.88rem"></span></div>
+  </section>
+
+  <!-- PLAY -->
+  <section class="screen" id="s-play" hidden>
+    <div class="deck" id="deck">
+      <div class="match" id="match" aria-hidden="true"><span class="match-bg"></span><div><b>It's a match!</b><span id="matchPts"></span></div></div>
+      <div class="toast" id="toast" aria-live="polite"></div>
+    </div>
+    <div class="actions">
+      <div class="act n">
+        <button class="round-btn n" id="chooseL" type="button" aria-label="Nope">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
+        <small id="btnL"></small>
+      </div>
+      <div class="act l">
+        <button class="round-btn l" id="chooseR" type="button" aria-label="Like">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-8.5-5.2-8.5-11.2A4.8 4.8 0 0 1 12 6.6a4.8 4.8 0 0 1 8.5 3.2C20.5 15.8 12 21 12 21z"/></svg>
+        </button>
+        <small id="btnR"></small>
+      </div>
+    </div>
+  </section>
+
+  <!-- SUMMARY -->
+  <section class="screen" id="s-summary" hidden>
+    <div class="intro">
+      <span class="eyebrow" id="sumKicker"></span>
+      <h2 id="sumTitle"></h2>
+    </div>
+    <div class="stats">
+      <div class="stat"><span class="eyebrow">Score</span><b id="sumScore">0</b></div>
+      <div class="stat"><span class="eyebrow">Correct</span><b id="sumCorrect">0</b></div>
+      <div class="stat"><span class="eyebrow">Best streak</span><b id="sumStreak">0</b></div>
+    </div>
+    <p class="lesson" id="sumLesson"></p>
+    <div class="panel" id="sumReview"></div>
+    <div class="row"><button class="btn" id="nextBtn" type="button">Next round</button></div>
+  </section>
+
+  <!-- FINAL -->
+  <section class="screen" id="s-final" hidden>
+    <div class="verdict">
+      <span class="eyebrow">Your dating profile says</span>
+      <h1 class="grad-text" id="rankTitle"></h1>
+      <p class="quip" id="rankQuip"></p>
+    </div>
+    <div class="stats">
+      <div class="stat"><span class="eyebrow">Total</span><b id="finScore">0</b></div>
+      <div class="stat"><span class="eyebrow">Accuracy</span><b id="finAcc">0%</b></div>
+      <div class="stat"><span class="eyebrow">Your best</span><b id="finBest">0</b></div>
+    </div>
+    <div class="row"><button class="btn" id="againBtn" type="button">Swipe again</button><span class="muted" style="font-size:.88rem">New shuffle every game</span></div>
+    <div class="panel">
+      <h3>What you were really looking for</h3>
+      <ul class="learned">
+        <li><b>Problems before solutions.</b><span class="muted">Requests often arrive as a tool. Ask what problem it solves, and for whom, before anything gets built. <a href="https://www.idg.gov.sg/guides-and-resources/productthinking1/">IDG module 1</a></span></li>
+        <li><b>A cause you can act on.</b><span class="muted">Keep asking why until you reach a cause within your control and closely tied to the outcome. <a href="https://www.idg.gov.sg/guides-and-resources/productthinking2/">Start with the whys</a></span></li>
+        <li><b>Outcomes over outputs.</b><span class="muted">Measure what changed for people. Pair leading indicators (early signals) with lagging ones (the result). <a href="https://www.idg.gov.sg/guides-and-resources/productthinking4/">Metrics</a></span></li>
+      </ul>
+    </div>
+    <footer>An unofficial parody game based on the <a href="https://www.idg.gov.sg/product-thinking/">Product Thinking learning pathway</a> from Singapore's Institute of Digital Government. All profiles, characters and figures are made up for teaching.</footer>
+  </section>
+</div>
+
+<script>
+(function(){
+  // a: "r" = LIKE (the product-thinking answer), "l" = NOPE
+  var ROUNDS = [
+    {
+      title: "Problem or solution?",
+      brief: "Solutions are charming on a first date. They're confident and they have a launch date. Swipe right only on real problems: a specific person, something going wrong.",
+      nope: { key: "Solution", pl: "Solutions", desc: "Names a thing to build or buy" },
+      like: { key: "Problem", pl: "Problems", desc: "Says what's going wrong, and for whom" },
+      lesson: "A solution-shaped request isn't necessarily a bad match. It just hasn't told you the problem yet. Ask “what problem does this solve, and for whom?” before you commit.",
+      time: 60,
+      cards: [
+        { n: "GenAI Chatbot", job: "Pitched by the Director, fresh from a conference", bio: "Looking for users. Any users, really. Must be live by Q3.", tags: ["#innovation","#urgent","#AI"], e: "🤖", a: "l", why: "It names a tool and a deadline, but not what's going wrong for users." },
+        { n: "The Dashboard", job: "Requested by the Minister's office", bio: "I'll put all your data on one screen. Which data? We'll figure it out.", tags: ["#visibility","#KPIs"], e: "📊", a: "l", why: "A dashboard is an answer. What decision can't someone make today?" },
+        { n: "End-to-End Platform", job: "Vendor · 5-year contract", bio: "I can digitalise your entire workflow. So, what's your workflow?", tags: ["#synergy","#transformation"], e: "🧩", a: "l", why: "A pitch looking for a problem." },
+        { n: "Pothole App", job: "The Deputy Director's idea", bio: "Residents will love reporting potholes on me. Probably.", tags: ["#citizenfirst","#mobile"], e: "🚧", a: "l", why: "Could be right, but is the problem slow reporting, slow repairs, or something else?" },
+        { n: "Microservices", job: "The IT architect's favourite", bio: "Let's break everything into small pieces. Trust me.", tags: ["#scalable","#modern"], e: "⚙️", a: "l", why: "An architecture choice still needs a problem to justify it." },
+        { n: "QR Code on Every Letter", job: "Senior Director", bio: "Scan me. Then… well, just scan me.", tags: ["#quickwin"], e: "🔳", a: "l", why: "A mechanism. What should people be able to do that they can't today?" },
+        { n: "Agency AI Strategy", job: "Mandated for every agency this year", bio: "60 pages, zero users. Looking for a problem to justify me.", tags: ["#mandate","#AI"], e: "📑", a: "l", why: "A deliverable. What should AI actually make better?" },
+        { n: "Seniors on Hold", job: "Reported by the call-centre lead", bio: "We wait 25 minutes on the hotline just to check our application status.", tags: ["#seniors","#measurable"], e: "☎️", a: "r", why: "A specific group with a specific, measurable pain." },
+        { n: "Triple Data Entry", job: "Frontline officer", bio: "I retype the same details from PDFs into three different systems.", tags: ["#frontline","#rework"], e: "⌨️", a: "r", why: "A clear user with a concrete problem, and many possible fixes." },
+        { n: "Low Rebate Uptake", job: "Policy officer", bio: "Only 40% of eligible households have applied for the rebate.", tags: ["#policygap","#data"], e: "🏠", a: "r", why: "A gap between intent and reality, with a number attached." },
+        { n: "Incomplete Applications", job: "Ops manager", bio: "One in five comes back incomplete, adding two weeks each time.", tags: ["#ops","#delays"], e: "📮", a: "r", why: "A measurable problem with a clear cost." },
+        { n: "Confused Parents", job: "From a survey of 800 parents", bio: "We don't know which schemes we qualify for.", tags: ["#families","#evidence"], e: "👪", a: "r", why: "A user need, backed by evidence." },
+        { n: "Abandoned Grant Form", job: "Grants team", bio: "Most applicants give up at the page asking for audited accounts.", tags: ["#SMEs","#dropoff"], e: "📝", a: "r", why: "A specific drop-off point. Now you can ask why." }
+      ]
+    },
+    {
+      title: "Symptom or root cause?",
+      brief: "Symptoms are loud and hard to ignore. Swipe right on root causes: why it's happening, and something your team can actually change. Each profile belongs to a small investigation.",
+      nope: { key: "Symptom", pl: "Symptoms", desc: "What people see or complain about" },
+      like: { key: "Root cause", pl: "Root causes", desc: "Why it happens, and something you can change" },
+      lesson: "The Five Whys takes you from symptom to cause. Stop at a cause that is within your control and closely tied to the outcome. If the answer blames users, you stopped asking too early.",
+      time: 60,
+      cards: [
+        { n: "3,000 Calls a Week", job: "Case: hotline overload", bio: "Everyone keeps asking “where's my application?”", tags: ["#loud","#visible"], e: "📞", a: "l", why: "What people see. Why are they calling?" },
+        { n: "No Status Updates", job: "Case: hotline overload", bio: "Applicants hear nothing at all after they hit submit.", tags: ["#fixable"], e: "🔕", a: "r", why: "It explains the calls, and your team can fix it." },
+        { n: "1 in 5 Sent Back", job: "Case: returned forms", bio: "Officers keep returning applications. Every. Single. Day.", tags: ["#rework"], e: "🔁", a: "l", why: "The visible effect. Why are they incomplete?" },
+        { n: "Docs Listed Last", job: "Case: returned forms", bio: "The form only reveals the required documents on its final page.", tags: ["#design"], e: "📄", a: "r", why: "A design decision you can change, directly tied to the outcome." },
+        { n: "40% Uptake", job: "Case: low rebate uptake", bio: "Most eligible households never applied.", tags: ["#headline"], e: "📉", a: "l", why: "The headline problem, not its cause." },
+        { n: "Stale Addresses", job: "Case: low rebate uptake", bio: "Eligibility letters go to addresses that are years out of date.", tags: ["#data"], e: "📬", a: "r", why: "A specific, fixable reason people never heard about the rebate." },
+        { n: "Empty Clinic Slots", job: "Case: clinic no-shows", bio: "A quarter of polyclinic appointments are missed.", tags: ["#waste"], e: "🩺", a: "l", why: "What the clinic sees. Why do patients miss them?" },
+        { n: "One Early Reminder", job: "Case: clinic no-shows", bio: "The only reminder goes out three weeks before the appointment.", tags: ["#cheapfix"], e: "⏰", a: "r", why: "It explains the forgetting, and it's cheap to change." },
+        { n: "60-Day Approvals", job: "Case: slow grants", bio: "Grant decisions take two months on average.", tags: ["#slow"], e: "⏳", a: "l", why: "A symptom. Where does the time go?" },
+        { n: "Triple Sign-off", job: "Case: slow grants", bio: "Three officers must approve every grant, even the $500 ones.", tags: ["#process"], e: "✍️", a: "r", why: "A process rule you can revisit, directly behind the delay." },
+        { n: "Constant Overtime", job: "Case: late nights", bio: "Case officers are working late every week.", tags: ["#tired"], e: "🌙", a: "l", why: "A symptom with many possible causes." },
+        { n: "Two Disconnected Systems", job: "Case: late nights", bio: "Case notes get typed into two systems that don't talk to each other.", tags: ["#integration"], e: "🔌", a: "r", why: "A concrete cause of the extra hours." },
+        { n: "“Confusing” Website", job: "Case: website feedback", bio: "Users keep saying it's confusing. Confusing how? Unclear.", tags: ["#vibes"], e: "🌀", a: "l", why: "A feeling, not a reason. Confusing how?" },
+        { n: "Org-Chart Navigation", job: "Case: website feedback", bio: "Pages are organised by department, not by what users want to do.", tags: ["#structure"], e: "🗂️", a: "r", why: "A structural cause you can redesign." },
+        { n: "Users Who Don't Read", job: "Case: unread letters", bio: "Residents just don't read their letters. It's their fault, obviously.", tags: ["#blame","#redflag"], e: "🙈", a: "l", why: "Blaming users ends the whys too soon. Why don't they read the letters?" }
+      ]
+    },
+    {
+      title: "Output or outcome?",
+      brief: "It's review season and everyone looks great in their quarterly report. Swipe right on outcomes: real change for the people who had the problem.",
+      nope: { key: "Output", pl: "Outputs", desc: "Something the team delivered" },
+      like: { key: "Outcome", pl: "Outcomes", desc: "A change for the people with the problem" },
+      lesson: "Outputs are easy to count and fully in your control, but they don't show that anything got better. Chase the outcome, and treat each output as a bet on it.",
+      time: 60,
+      cards: [
+        { n: "The New Portal", job: "Launched in March", bio: "I went live. Isn't that enough?", tags: ["#launched"], e: "🚀", a: "l", why: "A delivery. Did applying get any easier?" },
+        { n: "200 Officers Trained", job: "Training update", bio: "Everyone sat through all 84 slides.", tags: ["#capability"], e: "🎓", a: "l", why: "Activity completed. Are cases handled any better?" },
+        { n: "14 Features Shipped", job: "Team retro", bio: "Velocity is my love language.", tags: ["#agile"], e: "📦", a: "l", why: "Velocity isn't value." },
+        { n: "60-Page Strategy", job: "Strategy office", bio: "Beautifully formatted. Rarely opened.", tags: ["#vision"], e: "📘", a: "l", why: "A document. Its outcomes are still to come." },
+        { n: "4 Data Integrations", job: "Tech update", bio: "I'm connected to everyone.", tags: ["#APIs"], e: "🔗", a: "l", why: "An enabler. It only matters if it cuts re-entry or errors." },
+        { n: "12 Workshops", job: "Engagement log", bio: "So. Many. Sticky notes.", tags: ["#cocreation"], e: "🗒️", a: "l", why: "Effort, not effect." },
+        { n: "99.9% Uptime", job: "Ops dashboard", bio: "Always available. Not always helpful.", tags: ["#reliable"], e: "🟢", a: "l", why: "Good hygiene, but a service can be up all year and help nobody." },
+        { n: "Apply in 12 Minutes", job: "Was 40 minutes", bio: "The median time to apply is down by 70%.", tags: ["#timesaved"], e: "⏱️", a: "r", why: "A measured change in what applicants experience." },
+        { n: "Half the Status Calls", job: "Hotline data", bio: "People are finding answers without having to call.", tags: ["#selfserve"], e: "📴", a: "r", why: "A change in behaviour: people no longer need help." },
+        { n: "Only 6% Returned", job: "Was 20%", bio: "Far fewer applications bounce back for missing documents.", tags: ["#fewererrors"], e: "✅", a: "r", why: "Less rework for staff and faster help for families." },
+        { n: "71% Uptake", job: "Was 40%", bio: "More eligible households are getting support.", tags: ["#impact"], e: "📈", a: "r", why: "More of the right people are being helped." },
+        { n: "14% No-shows", job: "Was 25%", bio: "Patients are actually turning up.", tags: ["#health"], e: "🏥", a: "r", why: "Patients' behaviour changed." },
+        { n: "3-Week Grant Decisions", job: "Was 9 weeks", bio: "Businesses hear back three times faster.", tags: ["#SMEs"], e: "💼", a: "r", why: "Time saved for the people applying." }
+      ]
+    },
+    {
+      title: "Bonus: leading or lagging?",
+      brief: "You need both kinds of indicator in the long run. This sprint, you want early signals you can act on this week.",
+      context: "Goal: more eligible families get support, sooner.",
+      nope: { key: "Lagging", pl: "Lagging indicators", desc: "The result, known only after the fact" },
+      like: { key: "Leading", pl: "Leading indicators", desc: "An early signal you can act on now" },
+      lesson: "Lagging indicators tell you whether you won. Leading indicators tell you while there's still time to change course. Keep both, and link them into a chain.",
+      time: 40,
+      cards: [
+        { n: "Form Completion Rate", job: "Measured weekly", bio: "Moves within days of any change you make.", tags: ["#earlysignal"], e: "🧭", a: "r", why: "It moves within days of a change." },
+        { n: "Prefilled Fields", job: "Measured every release", bio: "Share of fields already filled in for returning applicants.", tags: ["#driver"], e: "🪄", a: "r", why: "An early driver of faster, error-free applications." },
+        { n: "SMS Click-throughs", job: "Measured daily", bio: "Clicks on “Check eligibility” from reminder texts.", tags: ["#outreach"], e: "💬", a: "r", why: "An early sign that outreach is working." },
+        { n: "Documents Page Drop-off", job: "Measured daily", bio: "Shows friction the moment it happens.", tags: ["#realtime"], e: "🚪", a: "r", why: "It shows friction as it happens." },
+        { n: "Days to First Payment", job: "Reported quarterly", bio: "Always tells you the truth, three months late.", tags: ["#result"], e: "💸", a: "l", why: "The result, measured after the fact." },
+        { n: "Families Supported", job: "Reported annually", bio: "The big number, once a year.", tags: ["#headline"], e: "🎯", a: "l", why: "The end result, counted after the year is over." },
+        { n: "Year-end Uptake", job: "Reported annually", bio: "Final score versus the eligible population.", tags: ["#final"], e: "🏁", a: "l", why: "The headline outcome, known late." },
+        { n: "Ombudsman Complaints", job: "Reported yearly", bio: "Shows up long after the damage is done.", tags: ["#toolate"], e: "📣", a: "l", why: "It surfaces long after the experience." }
+      ]
+    }
+  ];
+
+  var RANKS = [
+    { min: 95, title: "Chief Why Officer", quip: "No chatbot gets past you without a problem statement. You only date root causes, and the Director is slightly afraid of you." },
+    { min: 85, title: "Product Thinker", quip: "You can spot a solution in disguise across the open-plan office. A couple of smooth talkers still got through." },
+    { min: 70, title: "Why Asker", quip: "You're asking the right questions. Try asking them once more before you swipe right." },
+    { min: 50, title: "Requirements Taker", quip: "You'd build exactly what was asked for, on time and to spec. Whether it helped anyone is another story." },
+    { min: 0,  title: "Solutioneer", quip: "You matched with the GenAI Chatbot. It's been a whirlwind. Nobody knows what it does. Swipe again?" }
+  ];
+
+  var GRADS = [["#FF9A8B","#FF6A88"],["#F6D365","#FDA085"],["#A18CD1","#FBC2EB"],["#84FAB0","#8FD3F4"],["#FCCB90","#D57EEB"],["#E0C3FC","#8EC5FC"],["#FA709A","#FEE140"],["#43E97B","#38F9D7"],["#667EEA","#764BA2"],["#FF758C","#FF7EB3"],["#4FACFE","#00F2FE"],["#F093FB","#F5576C"]];
+  function gradFor(name){ var h = 0; for (var i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) >>> 0; var g = GRADS[h % GRADS.length]; return "linear-gradient(160deg," + g[0] + "," + g[1] + ")"; }
+
+  var BEST_KEY = "problem-match-best-v1";
+  var $ = function(id){ return document.getElementById(id); };
+  var reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var BRIEF = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/></svg>';
+
+  ROUNDS.forEach(function(r, i){
+    var li = document.createElement("li");
+    li.innerHTML = '<span class="nv"></span><span class="t"></span><span class="lv"></span>';
+    li.querySelector(".nv").textContent = "✕ " + r.nope.key;
+    li.querySelector(".t").textContent = (i === 3 ? "Bonus" : "Round " + (i + 1)) + " · " + r.time + "s";
+    li.querySelector(".lv").textContent = r.like.key + " ♥";
+    $("pairs").appendChild(li);
+  });
+
+  var S = null, R = null, rafId = 0, lastTs = 0, locked = false;
+  function newGame(){ S = { round: 0, total: 0, correct: 0 }; }
+
+  function show(id){
+    ["s-title","s-intro","s-play","s-summary","s-final"].forEach(function(s){ $(s).hidden = s !== id; });
+    var inGame = id === "s-play" || id === "s-intro" || id === "s-summary";
+    $("hud").hidden = !inGame; $("hudStats").hidden = !inGame;
+    window.scrollTo(0, 0);
+  }
+  function shuffle(a){ a = a.slice(); for (var i = a.length - 1; i > 0; i--){ var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+  function roundLabel(i){ return i === 3 ? "Bonus round" : "Round " + (i + 1) + " of 3"; }
+
+  // ---------- intro ----------
+  function showIntro(){
+    var r = ROUNDS[S.round];
+    $("introKicker").textContent = roundLabel(S.round);
+    $("introTitle").textContent = r.title.replace("Bonus: ", "");
+    $("introBrief").textContent = r.brief;
+    $("introContext").hidden = !r.context; $("introContext").textContent = r.context || "";
+    $("introN").textContent = r.nope.pl; $("introNd").textContent = r.nope.desc;
+    $("introL").textContent = r.like.pl; $("introLd").textContent = r.like.desc;
+    $("introTime").textContent = r.cards.length + " profiles · " + r.time + " seconds";
+    $("hudRound").textContent = roundLabel(S.round) + " · " + r.title.replace("Bonus: ", "");
+    $("timerBar").style.transform = "scaleX(1)"; $("timer").classList.remove("low");
+    updateHud(0);
+    show("s-intro"); $("goBtn").focus();
+  }
+
+  // ---------- play ----------
+  function beginPlay(){
+    var r = ROUNDS[S.round];
+    R = { deck: shuffle(r.cards), pos: 0, score: 0, streak: 0, best: 0, time: r.time, results: [], shownAt: 0, running: true };
+    $("btnL").textContent = "NOPE · " + r.nope.key; $("btnR").textContent = "LIKE · " + r.like.key;
+    show("s-play");
+    renderCards();
+    lastTs = 0; cancelAnimationFrame(rafId); rafId = requestAnimationFrame(tick);
+  }
+
+  function tick(ts){
+    if (!R || !R.running) return;
+    if (!lastTs) lastTs = ts;
+    var dt = Math.min(0.1, (ts - lastTs) / 1000); lastTs = ts;
+    if (!document.hidden) R.time -= dt;
+    $("timerBar").style.transform = "scaleX(" + Math.max(0, R.time / ROUNDS[S.round].time) + ")";
+    $("timer").classList.toggle("low", R.time < 8);
+    if (R.time <= 0){ endRound(); return; }
+    rafId = requestAnimationFrame(tick);
+  }
+
+  function cardEl(card, idx, isTop){
+    var r = ROUNDS[S.round];
+    var el = document.createElement("div");
+    el.className = "card " + (isTop ? "top" : "next");
+    var bars = ""; for (var i = 0; i < R.deck.length; i++) bars += '<i' + (i <= idx ? ' class="on"' : '') + '></i>';
+    el.innerHTML =
+      '<div class="photo"><span class="emoji"></span></div>' +
+      '<div class="bars">' + bars + '</div>' +
+      (isTop ? '<span class="stamp like">LIKE<small></small></span><span class="stamp nope">NOPE<small></small></span>' : '') +
+      '<div class="info"><div class="name"></div><div class="job">' + BRIEF + '<span></span></div><p class="bio"></p><div class="tags"></div></div>';
+    el.querySelector(".photo").style.background = gradFor(card.n);
+    el.querySelector(".emoji").textContent = card.e;
+    el.querySelector(".name").textContent = card.n;
+    el.querySelector(".job span").textContent = card.job;
+    el.querySelector(".bio").textContent = "“" + card.bio + "”";
+    var tags = el.querySelector(".tags");
+    card.tags.forEach(function(t){ var s = document.createElement("span"); s.textContent = t; tags.appendChild(s); });
+    if (isTop){
+      el.querySelector(".stamp.like small").textContent = r.like.key;
+      el.querySelector(".stamp.nope small").textContent = r.nope.key;
+      el.setAttribute("role", "group");
+      el.setAttribute("aria-label", "Profile " + (idx + 1) + " of " + R.deck.length + ": " + card.n);
+    }
+    return el;
+  }
+
+  function renderCards(){
+    var deck = $("deck");
+    Array.prototype.slice.call(deck.querySelectorAll(".card")).forEach(function(c){ c.remove(); });
+    var anchor = $("match");
+    if (R.pos + 1 < R.deck.length) deck.insertBefore(cardEl(R.deck[R.pos + 1], R.pos + 1, false), anchor);
+    var top = cardEl(R.deck[R.pos], R.pos, true);
+    deck.insertBefore(top, anchor);
+    attachDrag(top);
+    R.shownAt = performance.now();
+    locked = false;
+  }
+
+  function answer(side){
+    if (!R || !R.running || locked) return;
+    locked = true;
+    var card = R.deck[R.pos], r = ROUNDS[S.round];
+    var ok = card.a === side;
+    var elapsed = (performance.now() - R.shownAt) / 1000;
+    if (ok){
+      R.streak++; R.best = Math.max(R.best, R.streak);
+      var mult = Math.min(3, 1 + 0.5 * Math.floor(R.streak / 3));
+      var pts = Math.round((100 + Math.max(0, Math.round(50 - 8 * elapsed))) * mult);
+      R.score += pts; S.total += pts; S.correct++;
+      var label = "+" + pts + (mult > 1 ? " · ×" + mult : "");
+      if (side === "r") matchFlash(label); else toast("✕ Dodged one  " + label, "good");
+    } else {
+      R.streak = 0; R.time -= 3;
+      toast(side === "r" ? "🚩 Red flag: " + r.nope.key + " · −3s" : "👻 Ghosted a keeper: " + r.like.key + " · −3s", "bad");
+    }
+    R.results.push({ card: card, picked: side, ok: ok });
+    updateHud(R.streak);
+
+    var top = $("deck").querySelector(".card.top");
+    var dir = side === "l" ? -1 : 1;
+    if (top){
+      top.querySelector(side === "r" ? ".stamp.like" : ".stamp.nope").style.opacity = 1;
+      top.style.transition = reduceMotion ? "none" : "transform .3s ease-in, opacity .3s ease-in";
+      top.style.transform = "translateX(" + (dir * 140) + "%) rotate(" + (dir * 20) + "deg)";
+      top.style.opacity = "0";
+    }
+    setTimeout(function(){
+      if (!R.running) return;
+      R.pos++;
+      if (R.pos >= R.deck.length) endRound(); else renderCards();
+    }, reduceMotion ? 60 : 260);
+  }
+
+  var matchTimer = 0, toastTimer = 0;
+  function matchFlash(label){
+    $("matchPts").textContent = label;
+    $("match").classList.add("show");
+    clearTimeout(matchTimer);
+    matchTimer = setTimeout(function(){ $("match").classList.remove("show"); }, 650);
+  }
+  function toast(text, cls){
+    var t = $("toast");
+    t.textContent = text; t.className = "toast show " + cls;
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){ t.className = "toast " + cls; }, 1000);
+  }
+  function updateHud(streak){
+    $("hudScore").textContent = S.total.toLocaleString();
+    var mult = Math.min(3, 1 + 0.5 * Math.floor(streak / 3));
+    $("hudStreak").innerHTML = "Streak <b>" + streak + (mult > 1 ? " · ×" + mult : "") + "</b>";
+    $("hudStreak").classList.toggle("hot", streak >= 3);
+  }
+
+  function attachDrag(el){
+    var startX = 0, startY = 0, dx = 0, dy = 0, active = false;
+    var sl = el.querySelector(".stamp.like"), sn = el.querySelector(".stamp.nope");
+    el.addEventListener("pointerdown", function(e){
+      if (locked) return;
+      active = true; startX = e.clientX; startY = e.clientY; dx = dy = 0;
+      el.setPointerCapture(e.pointerId);
+      el.classList.add("dragging"); el.style.transition = "none";
+    });
+    el.addEventListener("pointermove", function(e){
+      if (!active) return;
+      dx = e.clientX - startX; dy = (e.clientY - startY) * 0.3;
+      el.style.transform = "translate(" + dx + "px," + dy + "px) rotate(" + (dx / 18) + "deg)";
+      sl.style.opacity = Math.min(1, Math.max(0, dx / 90));
+      sn.style.opacity = Math.min(1, Math.max(0, -dx / 90));
+    });
+    function end(){
+      if (!active) return;
+      active = false; el.classList.remove("dragging");
+      if (Math.abs(dx) > 90){ answer(dx > 0 ? "r" : "l"); return; }
+      el.style.transition = "transform .25s cubic-bezier(.3,1.4,.5,1)";
+      el.style.transform = "";
+      sl.style.opacity = 0; sn.style.opacity = 0;
+    }
+    el.addEventListener("pointerup", end);
+    el.addEventListener("pointercancel", end);
+  }
+
+  // ---------- summary ----------
+  function endRound(){
+    if (!R.running) return;
+    R.running = false; cancelAnimationFrame(rafId);
+    var r = ROUNDS[S.round];
+    var timeBonus = 0;
+    if (R.pos >= R.deck.length && R.time > 0){ timeBonus = Math.round(R.time) * 10; R.score += timeBonus; S.total += timeBonus; }
+    var right = R.results.filter(function(x){ return x.ok; }).length;
+    var unplayed = R.deck.slice(R.pos + (R.results.length > R.pos ? 1 : 0));
+    var n = R.deck.length;
+
+    $("sumKicker").textContent = roundLabel(S.round) + " · " + (R.time <= 0 ? "time's up" : "all profiles seen");
+    $("sumTitle").textContent = right === n ? "Perfect match rate." : right >= n * 0.75 ? "Great taste." : right >= n * 0.5 ? "Some questionable swipes." : "Your type needs work.";
+    $("sumScore").textContent = R.score.toLocaleString();
+    $("sumCorrect").textContent = right + "/" + n;
+    $("sumStreak").textContent = R.best;
+    $("sumLesson").textContent = r.lesson + (timeBonus ? " (Includes +" + timeBonus + " for finishing early.)" : "");
+
+    var wrap = $("sumReview"); wrap.innerHTML = "";
+    function group(title, sub, cards){
+      if (!cards.length) return;
+      var g = document.createElement("div"); g.className = "review-group";
+      g.innerHTML = '<h3></h3><ul class="review"></ul>';
+      g.querySelector("h3").innerHTML = title + "<small></small>";
+      g.querySelector("small").textContent = sub;
+      var ul = g.querySelector("ul");
+      cards.forEach(function(c){
+        var li = document.createElement("li");
+        li.innerHTML = '<span class="av"></span><span class="q"></span><span class="a"></span><span class="w"></span>';
+        li.querySelector(".av").style.background = gradFor(c.n);
+        li.querySelector(".av").textContent = c.e;
+        li.querySelector(".q").textContent = c.n;
+        var a = li.querySelector(".a");
+        a.textContent = c.a === "r" ? "♥ " + r.like.key + ": should have liked" : "✕ " + r.nope.key + ": should have noped";
+        a.classList.add(c.a === "r" ? "like" : "nope");
+        li.querySelector(".w").textContent = c.why;
+        ul.appendChild(li);
+      });
+      wrap.appendChild(g);
+    }
+    group("🚩 Red flags you liked", "You swiped right, but these were " + r.nope.pl.toLowerCase() + ".", R.results.filter(function(x){ return !x.ok && x.picked === "r"; }).map(function(x){ return x.card; }));
+    group("👻 Keepers you ghosted", "You swiped left on real " + r.like.pl.toLowerCase() + ".", R.results.filter(function(x){ return !x.ok && x.picked === "l"; }).map(function(x){ return x.card; }));
+    group("⏳ Still in your queue", "You ran out of time before seeing these.", unplayed);
+    wrap.hidden = !wrap.children.length;
+
+    $("nextBtn").textContent = S.round < ROUNDS.length - 1 ? (S.round === 2 ? "Bonus round" : "Next round") : "See your verdict";
+    setTimeout(function(){ show("s-summary"); $("nextBtn").focus(); }, reduceMotion ? 0 : 400);
+  }
+
+  // ---------- final ----------
+  function showFinal(){
+    var possible = ROUNDS.reduce(function(n, r){ return n + r.cards.length; }, 0);
+    var acc = Math.round(S.correct / possible * 100);
+    var rank = RANKS.filter(function(k){ return acc >= k.min; })[0];
+    $("rankTitle").textContent = rank.title;
+    $("rankQuip").textContent = rank.quip;
+    $("finScore").textContent = S.total.toLocaleString();
+    $("finAcc").textContent = acc + "%";
+    var best = 0;
+    try { best = parseInt(localStorage.getItem(BEST_KEY), 10) || 0; } catch(e){}
+    if (S.total > best){ best = S.total; try { localStorage.setItem(BEST_KEY, String(best)); } catch(e){} }
+    $("finBest").textContent = best.toLocaleString();
+    show("s-final");
+  }
+
+  // ---------- wiring ----------
+  $("startBtn").addEventListener("click", function(){ newGame(); showIntro(); });
+  $("goBtn").addEventListener("click", beginPlay);
+  $("chooseL").addEventListener("click", function(){ answer("l"); });
+  $("chooseR").addEventListener("click", function(){ answer("r"); });
+  $("nextBtn").addEventListener("click", function(){ if (S.round < ROUNDS.length - 1){ S.round++; showIntro(); } else showFinal(); });
+  $("againBtn").addEventListener("click", function(){ newGame(); showIntro(); });
+  document.addEventListener("keydown", function(e){
+    if ($("s-play").hidden) return;
+    if (e.key === "ArrowLeft"){ e.preventDefault(); answer("l"); }
+    else if (e.key === "ArrowRight"){ e.preventDefault(); answer("r"); }
+  });
+  document.addEventListener("visibilitychange", function(){ lastTs = 0; });
+})();
+</script>
+
 </body>
 </html>
